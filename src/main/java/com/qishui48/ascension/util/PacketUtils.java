@@ -24,7 +24,7 @@ public class PacketUtils {
         NbtCompound nbt = dataSaver.getPersistentData();
         NbtCompound syncNbt = new NbtCompound();
 
-        if (nbt.contains("my_global_skills")) syncNbt.put("my_global_skills", nbt.get("my_global_skills"));
+        if (nbt.contains("skill_points")) syncNbt.put("skill_points", nbt.get("skill_points"));
         if (nbt.contains("skill_levels")) syncNbt.put("skill_levels", nbt.get("skill_levels"));
         if (nbt.contains("revealed_skills")) syncNbt.put("revealed_skills", nbt.get("revealed_skills"));
         if (nbt.contains("disabled_skills")) syncNbt.put("disabled_skills", nbt.get("disabled_skills"));

@@ -30,7 +30,7 @@ public class SkillTreeScreen extends Screen {
     private boolean isDragging = false;
     private int tickCounter = 0;
 
-    public SkillTreeScreen() { super(Text.of("Skill Tree")); }
+    public SkillTreeScreen() { super(Text.translatable("gui.ascension.title")); }
 
     @Override
     protected void init() {
@@ -217,7 +217,7 @@ public class SkillTreeScreen extends Screen {
 
         // HUD
         if (this.client != null && this.client.player != null) {
-            int points = ((IEntityDataSaver) this.client.player).getPersistentData().getInt("my_global_skills");
+            int points = ((IEntityDataSaver) this.client.player).getPersistentData().getInt("skill_points");
 
             // 1. 定义位置参数
             int iconX = 10;
@@ -254,8 +254,8 @@ public class SkillTreeScreen extends Screen {
             }
 
             // 底部操作提示
-            // 也可以搞个翻译键 "gui.ascension.controls_hint"
-            context.drawText(this.textRenderer, "左键拖动，滚轮缩放，中键切换技能", 10, this.height - 20, 0xFFAAAAAA, true);
+            Text hintText = Text.translatable("gui.ascension.controls_hint");
+            context.drawText(this.textRenderer, hintText, 10, this.height - 20, 0xFFAAAAAA, true);
         }
     }
 

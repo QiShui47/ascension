@@ -1,3 +1,133 @@
 {
-  "item.template-mod.simple_item": "item for test"
+  "category.ascension.general": "Ascension",
+  "key.ascension.open_gui": "Open Skill Tree",
+  "dimension.minecraft.overworld": "Overworld",
+  "dimension.minecraft.the_nether": "The Nether",
+  "dimension.minecraft.the_end": "The End",
+
+  "_comment_rarity": "--- Rarity ---",
+  "rarity.ascension.common": "Common",
+  "rarity.ascension.uncommon": "Uncommon",
+  "rarity.ascension.rare": "Rare",
+  "rarity.ascension.epic": "Epic",
+
+  "_comment_structure_type": "--- Structure Types ---",
+  "type.ascension.structure.common": "Ruins",
+  "type.ascension.structure.dungeon": "Dungeon",
+  "type.ascension.structure.mineshaft": "Mineshaft",
+  "type.ascension.structure.stronghold": "Stronghold",
+  "type.ascension.structure.temple": "Temple",
+  "type.ascension.structure.fortress": "Nether Fortress",
+  "type.ascension.structure.bastion": "Bastion Remnant",
+  "type.ascension.structure.end_city": "End City",
+  "type.ascension.structure.ancient_city": "Ancient City",
+
+  "_comment_topic": "--- Notification Headers (With Brackets) ---",
+  "notification.ascension.header.discovery": "[Discovery]",
+  "notification.ascension.header.food": "[Gastronome]",
+  "notification.ascension.header.biome": "[New Horizon]",
+  "notification.ascension.header.structure": "[Archaeologist]",
+  "notification.ascension.header.dimension": "[Dimension]",
+
+  "notification.ascension.header.kill.first": "[First Kill]",
+  "notification.ascension.header.kill.hostile": "[Hunt]",
+  "notification.ascension.header.kill.hard": "[Hard Target]",
+  "notification.ascension.header.kill.boss": "[Boss Kill]",
+
+  "notification.ascension.header.advancement.task": "[Advancement]",
+  "notification.ascension.header.advancement.goal": "[Goal]",
+  "notification.ascension.header.advancement.challenge": "[Challenge]",
+
+  "_comment_verb": "--- Notification Verbs ---",
+  "notification.ascension.verb.explore": "Explored",
+  "notification.ascension.verb.taste": "Tasted",
+  "notification.ascension.verb.find": "Found",
+  "notification.ascension.verb.defeat": "Defeated",
+  "notification.ascension.verb.arrive": "Arrived at",
+  "notification.ascension.suffix.points": "+%s Skill Points",
+
+  "_comment_ui": "--- UI ---",
+  "gui.ascension.title": "Skill Tree",
+  "gui.ascension.controls_hint": "L-Click to Drag, Scroll to Zoom, M-Click to Toggle",
+  "gui.ascension.points_remaining": "Points Remaining: %s",
+  "gui.ascension.help_tip": "How to get Skill Points",
+  "tooltip.ascension.help.collect": "Collect new items (+1~4)",
+  "tooltip.ascension.help.food": "Taste new foods (+2)",
+  "tooltip.ascension.help.explore": "Discover new biomes (+2) / dimensions (+20)",
+  "tooltip.ascension.help.loot": "Loot structure chests (+5~20)",
+  "tooltip.ascension.help.kill": "Kill new mobs (+1~10)",
+  "tooltip.ascension.help.advancement": "Complete advancements (+5~45)",
+
+  "enchantment.ascension.life_steal": "Life Steal",
+  "enchantment.ascension.speed_steal": "Speed Steal",
+  "enchantment.ascension.death_star_cannon": "Death Star Cannon",
+  "enchantment.ascension.life_force": "Life Force",
+  "enchantment.ascension.pocket_bucket": "Pocket Bucket",
+  "enchantment.ascension.pocket_guard": "Pocket Guard",
+  "enchantment.ascension.pocket_cat": "Pocket Cat",
+
+  "skill.ascension.root": "Basics",
+  "skill.ascension.root.desc": "Where it all begins.",
+
+  "skill.ascension.combat": "Combat Basics",
+  "skill.ascension.combat.desc": "Helps you gain an advantage in battle.",
+
+  "skill.ascension.survival": "Survival Skills",
+  "skill.ascension.survival.desc": "Survive easier in harsh conditions.",
+
+  "skill.ascension.mining": "Mining Skills",
+  "skill.ascension.mining.desc": "Improves efficiency in destruction and creation.",
+
+  "skill.ascension.fire_res": "Fire Immunity",
+  "skill.ascension.fire_res.desc": "Ignore fire damage, just like a Nether mob.",
+
+  "skill.ascension.health_boost": "Health Boost",
+  "skill.ascension.health_boost.desc": "Grants 2 extra hearts.",
+  "skill.ascension.health_boost.desc.2": "Grants 4 extra hearts.",
+  "skill.ascension.health_boost.desc.3": "Grants 6 extra hearts.",
+  "skill.ascension.health_boost.desc.4": "Grants 8 extra hearts!",
+  "skill.ascension.health_boost.desc.5": "Grants 10 extra hearts! Super tanky.",
+
+  "skill.ascension.rocket_boost": "Rocket Boost",
+  "skill.ascension.rocket_boost.desc": "Allows you to jump one extra time in mid-air.",
+  "skill.ascension.rocket_boost.desc.2": "Allows you to jump two extra times in mid-air.",
+
+  "skill.ascension.charged_jump": "Charged Jump",
+  "skill.ascension.charged_jump.desc": "Hold jump while sneaking to charge; release to jump higher and farther.",
+  "skill.ascension.charged_jump.desc.2": "Hold jump while sneaking to charge; release to jump extremely high and far.",
+
+  "skill.ascension.battle_instinct": "Battle Instinct",
+  "skill.ascension.battle_instinct.desc": "Increases attack speed.",
+  "skill.ascension.battle_instinct.desc.2": "Further increases attack speed.",
+  "skill.ascension.battle_instinct.desc.3": "Maximizes attack speed.",
+
+  "skill.ascension.adrenaline_burst": "Adrenaline Burst",
+  "skill.ascension.adrenaline_burst.desc": "Grants Absorption and Speed when taking heavy damage at full health.",
+  "skill.ascension.adrenaline_burst.desc.2": "Grants more Absorption and Speed when taking heavy damage at full health.",
+
+  "skill.ascension.hunger_constitution": "Hunger Constitution",
+  "skill.ascension.hunger_constitution.desc": "Grants Absorption when hunger drops.",
+  "skill.ascension.hunger_constitution.desc.2": "Grants more Absorption when hunger drops.",
+
+  "skill.ascension.hunger_tolerance": "Hunger Tolerance",
+  "skill.ascension.hunger_tolerance.desc": "Allows health regeneration as long as hunger is not 0.",
+
+  "skill.ascension.hunger_burst": "Hunger Burst",
+  "skill.ascension.hunger_burst.desc": "Grants Speed and Strength when hunger reaches 0.",
+  "skill.ascension.hunger_burst.desc.2": "Grants Speed and Strength when hunger reaches 0.",
+
+  "skill.ascension.pocket_furnace": "Pocket Furnace",
+  "skill.ascension.pocket_furnace.desc": "Automatically smelts the item in the last hotbar slot. Low efficiency.",
+  "skill.ascension.pocket_furnace.desc.2": "Automatically smelts the item in the last hotbar slot. Medium efficiency.",
+
+  "skill.ascension.swift_move": "Swift Assault",
+  "skill.ascension.swift_move.desc": "Speed Boost",
+  "skill.ascension.swift_move.desc.2": "Speed Boost +",
+  "skill.ascension.swift_move.desc.3": "Speed Boost ++",
+
+  "criterion.ascension.eat_apple": "Ate %s apples",
+  "criterion.ascension.kill_cow": "Killed %s cows",
+  "criterion.ascension.jump": "Jumped %s times",
+  "criterion.ascension.kill_phantom": "Killed %s phantoms",
+  "criterion.ascension.fly_elytra": "Flew %s meters with Elytra"
 }

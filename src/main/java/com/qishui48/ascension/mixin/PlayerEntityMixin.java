@@ -18,6 +18,8 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import net.minecraft.world.World;
 import java.util.Optional;
 import net.minecraft.nbt.NbtCompound;
@@ -192,13 +194,18 @@ public abstract class PlayerEntityMixin {
 
             // 奖励 2 点
             int points = 2;
-            int currentPoints = nbt.getInt("my_global_skills");
-            nbt.putInt("my_global_skills", currentPoints + points);
+            int currentPoints = nbt.getInt("skill_points");
+            nbt.putInt("skill_points", currentPoints + points);
             PacketUtils.syncSkillData(serverPlayer);
 
-            Text msg = Text.literal("§b[美食家] §f品尝 ")
+            Text msg = Text.translatable("notification.ascension.header.food").formatted(Formatting.AQUA)
+                    .append(" ")
+                    .append(Text.translatable("notification.ascension.verb.taste").formatted(Formatting.WHITE))
+                    .append(" ")
                     .append(Text.translatable(stack.getItem().getTranslationKey()).formatted(Formatting.GOLD))
-                    .append(Text.literal(" §a+" + points + " 技能点").formatted(Formatting.BOLD));
+                    .append(" ")
+                    .append(Text.translatable("notification.ascension.suffix.points", points).formatted(Formatting.BOLD, Formatting.GREEN));
+
             PacketUtils.sendNotification(serverPlayer, msg);
 
             serverPlayer.playSound(SoundEvents.ENTITY_PLAYER_BURP, SoundCategory.PLAYERS, 0.5f, 1.5f);
@@ -240,22 +247,26 @@ public abstract class PlayerEntityMixin {
             exploredBiomes.add(NbtString.of(biomeId));
             nbt.put("explored_biomes", exploredBiomes);
 
-            // 奖励 2 点 (鼓励探索)
+            // 奖励 2 点
             int points = 2;
-            int currentPoints = nbt.getInt("my_global_skills");
-            nbt.putInt("my_global_skills", currentPoints + points);
+            int currentPoints = nbt.getInt("skill_points");
+            nbt.putInt("skill_points", currentPoints + points);
 
             PacketUtils.syncSkillData(serverPlayer);
 
-            // 获取群系名称 (稍微麻烦点，需要用 translate key)
-            // 这里的逻辑稍微简化，直接用 ID 或者尝试获取 Name
-            // Text.translatableUtil.getTranslationKey 比较复杂，直接构造 key
-            String transKey = "biome." + biomeId.replace(':', '.');
-            Text biomeName = Text.translatable(transKey).formatted(Formatting.GREEN);
+            // === 群系名称翻译 ===
+            // 原版群系翻译键格式：biome.namespace.path
+            // 例如 minecraft:plains -> biome.minecraft.plains
+            String biomeTranslationKey = Util.createTranslationKey("biome", new Identifier(biomeId));
 
-            Text msg = Text.literal("§b[新视界] §f发现群系 ")
-                    .append(biomeName)
-                    .append(Text.literal(" §a+" + points + " 技能点").formatted(Formatting.BOLD));
+            // === 构建完全本地化的消息 ===
+            Text msg = Text.translatable("notification.ascension.header.biome").formatted(Formatting.GREEN) // [新视界]
+                    .append(" ")
+                    .append(Text.translatable("notification.ascension.verb.find").formatted(Formatting.WHITE)) // 发现
+                    .append(" ")
+                    .append(Text.translatable(biomeTranslationKey).formatted(Formatting.GREEN)) // 群系名
+                    .append(" ")
+                    .append(Text.translatable("notification.ascension.suffix.points", points).formatted(Formatting.BOLD, Formatting.GREEN));
 
             PacketUtils.sendNotification(serverPlayer, msg);
 

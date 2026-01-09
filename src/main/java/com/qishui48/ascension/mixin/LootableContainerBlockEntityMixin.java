@@ -53,25 +53,49 @@ public abstract class LootableContainerBlockEntityMixin {
 
             // 分级奖励
             int points = 5; // 默认
-            String typeName = "遗迹";
+            String typeKey = "type.ascension.structure.common"; // 默认翻译键
 
-            if (lootId.contains("stronghold") || lootId.contains("temple")) {
+            // 根据 lootId 字符串包含的关键词来判断
+            if (lootId.contains("stronghold")) {
                 points = 7;
-                typeName = "神殿/要塞";
-            } else if (lootId.contains("end_city") || lootId.contains("ancient_city")) {
+                typeKey = "type.ascension.structure.stronghold";
+            } else if (lootId.contains("ancient_city")) {
                 points = 10;
-                typeName = "史诗遗迹";
+                typeKey = "type.ascension.structure.ancient_city";
+            } else if (lootId.contains("end_city")) {
+                points = 10;
+                typeKey = "type.ascension.structure.end_city";
+            } else if (lootId.contains("fortress")) { // nether_bridge usually refers to fortress chests
+                points = 7;
+                typeKey = "type.ascension.structure.fortress";
+            } else if (lootId.contains("bastion")) {
+                points = 7;
+                typeKey = "type.ascension.structure.bastion";
+            } else if (lootId.contains("temple") || lootId.contains("pyramid") || lootId.contains("outpost")) {
+                points = 5;
+                typeKey = "type.ascension.structure.temple";
+            } else if (lootId.contains("mineshaft")) {
+                points = 3;
+                typeKey = "type.ascension.structure.mineshaft";
+            } else if (lootId.contains("dungeon") || lootId.contains("monster_room")) {
+                points = 3;
+                typeKey = "type.ascension.structure.dungeon";
             }
 
             // 加分
-            int currentPoints = nbt.getInt("my_global_skills");
-            nbt.putInt("my_global_skills", currentPoints + points);
+            int currentPoints = nbt.getInt("skill_points");
+            nbt.putInt("skill_points", currentPoints + points);
             PacketUtils.syncSkillData(serverPlayer);
 
             // 通知
-            Text msg = Text.literal("§6[考古学家] §f探索 ")
-                    .append(Text.literal(typeName).formatted(Formatting.AQUA))
-                    .append(Text.literal(" §a+" + points + " 技能点").formatted(Formatting.BOLD));
+            Text msg = Text.translatable("notification.ascension.header.structure").formatted(Formatting.GOLD)
+                    .append(" ")
+                    .append(Text.translatable("notification.ascension.verb.explore").formatted(Formatting.WHITE))
+                    .append(" ")
+                    .append(Text.literal(typeKey).formatted(Formatting.AQUA))
+                    .append(" ")
+                    .append(Text.translatable("notification.ascension.suffix.points", points).formatted(Formatting.BOLD, Formatting.GREEN));
+
             PacketUtils.sendNotification(serverPlayer, msg);
 
             serverPlayer.playSound(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundCategory.PLAYERS, 0.5f, 0.8f);

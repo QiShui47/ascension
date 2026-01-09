@@ -54,7 +54,7 @@ public class Ascension implements ModInitializer {
 			@Override
 			public int getMaxLevel() { return 1; }
 		};
-		POCKET_GUARD = new SpecialBowEnchantment(); // 使用我们写的互斥基类
+		POCKET_GUARD = new SpecialBowEnchantment(); // 使用互斥基类
 		POCKET_CAT = new SpecialBowEnchantment();
 		DEATH_STAR_CANNON = new Enchantment(Enchantment.Rarity.VERY_RARE, EnchantmentTarget.BOW, new EquipmentSlot[]{EquipmentSlot.MAINHAND}) {
 			@Override
@@ -76,7 +76,7 @@ public class Ascension implements ModInitializer {
 		//踏足新维度的事件
 		ModEvents.register();
 
-		// 3. 注册网络包 (Clean!)
+		// 3. 注册网络包
 		ModMessages.registerC2SPackets();
 
 		// 4. 注册登录同步事件 - 玩家加入服务器时
@@ -84,13 +84,13 @@ public class Ascension implements ModInitializer {
 			PacketUtils.syncSkillData(handler.getPlayer());
 			SkillEffectHandler.refreshAttributes(handler.getPlayer());
 		});
-		// 玩家重生 (Respawn)
+		// 玩家重生
 		net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
 			PacketUtils.syncSkillData(newPlayer);
 			// 新增：刷新属性
 			SkillEffectHandler.refreshAttributes(newPlayer);
 		});
-		// === 关键：死亡数据保留 (尸体搬运工) ===
+		// === 死亡数据保留===
 		ServerPlayerEvents.COPY_FROM.register((oldPlayer, newPlayer, alive) -> {
 			// 无论是因为死亡(alive=false)还是哪怕从末地回来(alive=true)，都要搬运数据
 			IEntityDataSaver oldData = (IEntityDataSaver) oldPlayer;

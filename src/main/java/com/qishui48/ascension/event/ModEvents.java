@@ -9,6 +9,7 @@ import net.minecraft.nbt.NbtString;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 
 public class ModEvents {
     public static void register() {
@@ -36,13 +37,26 @@ public class ModEvents {
             int points = 20;
             if (dimId.equals("minecraft:the_end")) points = 50;
 
-            int currentPoints = nbt.getInt("my_global_skills");
-            nbt.putInt("my_global_skills", currentPoints + points);
+            int currentPoints = nbt.getInt("skill_points");
+            nbt.putInt("skill_points", currentPoints + points);
             PacketUtils.syncSkillData(player);
 
-            Text msg = Text.literal("§d[位面旅行] §f抵达 ")
-                    .append(Text.literal(dimId).formatted(Formatting.LIGHT_PURPLE))
-                    .append(Text.literal(" §a+" + points + " 技能点").formatted(Formatting.BOLD));
+            // [核心修改] 构建维度的翻译键
+            // destination.getRegistryKey().getValue() 返回如 "minecraft:the_nether"
+            // 转换为 -> "dimension.minecraft.the_nether"
+            Identifier dimIdentifier = destination.getRegistryKey().getValue();
+            String dimTranslationKey = "dimension." + dimIdentifier.getNamespace() + "." + dimIdentifier.getPath();
+
+            // 发送通知
+            Text msg = Text.translatable("notification.ascension.header.dimension").formatted(Formatting.LIGHT_PURPLE)
+                    .append(" ")
+                    .append(Text.translatable("notification.ascension.verb.arrive").formatted(Formatting.WHITE))
+                    .append(" ")
+                    // 自动翻译维度名称
+                    .append(Text.translatable(dimTranslationKey).formatted(Formatting.LIGHT_PURPLE))
+                    .append(" ")
+                    .append(Text.translatable("notification.ascension.suffix.points", points).formatted(Formatting.BOLD, Formatting.GREEN));
+
             PacketUtils.sendNotification(player, msg);
         });
     }

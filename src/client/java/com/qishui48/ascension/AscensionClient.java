@@ -51,8 +51,8 @@ public class AscensionClient implements ClientModInitializer {
 					IEntityDataSaver dataSaver = (IEntityDataSaver) client.player;
 					NbtCompound localNbt = dataSaver.getPersistentData();
 
-					if (incomingNbt.contains("my_global_skills")) {
-						localNbt.putInt("my_global_skills", incomingNbt.getInt("my_global_skills"));
+					if (incomingNbt.contains("skill_points")) {
+						localNbt.putInt("skill_points", incomingNbt.getInt("skill_points"));
 					}
 					if (incomingNbt.contains("skill_levels")) {
 						localNbt.put("skill_levels", incomingNbt.getCompound("skill_levels"));

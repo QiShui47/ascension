@@ -28,7 +28,7 @@ public class SetSkillCommand {
 
             // 修改 NBT
             IEntityDataSaver dataSaver = (IEntityDataSaver) player;
-            dataSaver.getPersistentData().putInt("my_global_skills", amount);
+            dataSaver.getPersistentData().putInt("skill_points", amount);
 
             // 同步给客户端
             PacketUtils.syncSkillData(player);

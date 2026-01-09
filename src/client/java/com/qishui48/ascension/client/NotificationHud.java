@@ -18,7 +18,7 @@ public class NotificationHud implements HudRenderCallback {
 
         public Notification(Text text) {
             this.text = text;
-            this.displayTicks = 120; // 6秒
+            this.displayTicks = 160; // 8秒
             this.fadeOutTicks = 20;  // 1秒淡出
         }
     }

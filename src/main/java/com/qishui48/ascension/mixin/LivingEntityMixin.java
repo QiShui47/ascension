@@ -69,7 +69,7 @@ public abstract class LivingEntityMixin extends Entity {
 
             // === 是首杀！计算点数 ===
             int points = 1; // 基础分 (比如杀牛杀羊)
-            String rankName = ""; // 评级名称
+            String rankKey = "notification.ascension.header.kill.first"; // 默认：首杀
             Formatting color = Formatting.WHITE;
 
             LivingEntity victim = (LivingEntity)(Object)this;
@@ -90,35 +90,39 @@ public abstract class LivingEntityMixin extends Entity {
             // 计算逻辑
             if (isBoss) {
                 points = 10;
-                rankName = " [BOSS击杀]";
-                color = Formatting.LIGHT_PURPLE; // 史诗紫
+                rankKey = "notification.ascension.header.kill.boss"; // BOSS击杀
+                color = Formatting.LIGHT_PURPLE;
             } else {
                 if (isHostile) {
-                    points += 1; // 敌对 +1
-                    rankName = " [狩猎]";
+                    points += 1;
+                    rankKey = "notification.ascension.header.kill.hostile"; // 狩猎
                     color = Formatting.YELLOW;
                 }
                 if (isHard) {
-                    points += 1; // 困难 +1 (如果是敌对且困难，就是 1+1+1=3)
-                    rankName = " [强敌击破]";
-                    color = Formatting.RED; // 红色
+                    points += 1;
+                    // 如果既是敌对又是强敌，这里会覆盖上面的 Key，显示“强敌击破”
+                    rankKey = "notification.ascension.header.kill.hard";
+                    color = Formatting.RED;
                 }
-                // 普通被动生物 points = 1, rankName = ""
             }
 
             // 存数据
             killedList.add(NbtString.of(entityId));
             nbt.put("killed_mobs", killedList);
-            int currentPoints = nbt.getInt("my_global_skills");
-            nbt.putInt("my_global_skills", currentPoints + points);
+            int currentPoints = nbt.getInt("skill_points");
+            nbt.putInt("skill_points", currentPoints + points);
 
             // 同步
             PacketUtils.syncSkillData(player);
 
             // 使用新的通知系统
-            Text msg = Text.literal("§6" + rankName + " §f击败 ")
+            Text msg = Text.translatable(rankKey).formatted(Formatting.GOLD)
+                    .append(" ")
+                    .append(Text.translatable("notification.ascension.verb.defeat").formatted(Formatting.WHITE))
+                    .append(" ")
                     .append(this.getType().getName().copy().formatted(color))
-                    .append(Text.literal(" §a+" + points + " 技能点").formatted(Formatting.BOLD));
+                    .append(" ")
+                    .append(Text.translatable("notification.ascension.suffix.points", points).formatted(Formatting.BOLD, Formatting.GREEN));
 
             PacketUtils.sendNotification(player, msg);
 

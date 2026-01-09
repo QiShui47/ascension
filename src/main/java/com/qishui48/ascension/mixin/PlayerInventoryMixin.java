@@ -87,7 +87,8 @@ public abstract class PlayerInventoryMixin {
         Rarity rarity = stack.getRarity();
         int pointsAwarded = 1;
         Formatting color = Formatting.WHITE;
-        String rarityName = "";
+        // 动态生成翻译键：rarity.ascension.common / rare / epic ...
+        String rarityKey = "rarity.ascension." + rarity.name().toLowerCase();
 
         switch (rarity) {
             case COMMON:
@@ -97,22 +98,19 @@ public abstract class PlayerInventoryMixin {
             case UNCOMMON: // 黄色物品 (如附魔瓶)
                 pointsAwarded = 2;
                 color = Formatting.YELLOW;
-                rarityName = " [罕见]";
                 break;
             case RARE: // 青色物品 (如信标)
                 pointsAwarded = 3;
                 color = Formatting.AQUA;
-                rarityName = " [珍贵]";
                 break;
             case EPIC: // 紫色物品 (如神级物品)
                 pointsAwarded =4;
                 color = Formatting.LIGHT_PURPLE;
-                rarityName = " [史诗]";
                 break;
         }
 
-        int currentPoints = nbt.getInt("my_global_skills");
-        nbt.putInt("my_global_skills", currentPoints + pointsAwarded);
+        int currentPoints = nbt.getInt("skill_points");
+        nbt.putInt("skill_points", currentPoints + pointsAwarded);
 
         // C. 同步与反馈
         PacketUtils.syncSkillData(serverPlayer);
@@ -121,10 +119,14 @@ public abstract class PlayerInventoryMixin {
         player.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.PLAYERS, 0.5f, 0.7f + (pointsAwarded * 0.2f));
 
         // 文字提示
-        Text msg = Text.literal("§6[新发现] ")
+        // [修改] 构建消息：括号现在在翻译键里
+        Text msg = Text.translatable("notification.ascension.header.discovery").formatted(Formatting.GOLD)
+                .append(" ")
                 .append(Text.literal(stack.getItem().getName().getString()).formatted(color))
-                .append(Text.literal(rarityName).formatted(color))
-                .append(Text.literal(" §a+" + pointsAwarded + " 技能点").formatted(Formatting.BOLD));
+                .append(" ")
+                .append(Text.translatable(rarityKey).formatted(color)) // 使用翻译后的稀有度
+                .append(" ")
+                .append(Text.translatable("notification.ascension.suffix.points", pointsAwarded).formatted(Formatting.BOLD, Formatting.GREEN));
         PacketUtils.sendNotification(serverPlayer, msg);
     }
 }

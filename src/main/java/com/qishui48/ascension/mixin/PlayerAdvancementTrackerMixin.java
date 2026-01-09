@@ -52,21 +52,36 @@ public abstract class PlayerAdvancementTrackerMixin {
                 // 根据类型分级
                 AdvancementFrame frame = advancement.getDisplay().getFrame();
                 int points = 0;
-                String typeName = "";
+                String headerKey = "";
 
                 switch (frame) {
-                    case TASK:      points = 5;  typeName = "进度达成"; break;
-                    case GOAL:      points = 15; typeName = "目标达成"; break;
-                    case CHALLENGE: points = 45; typeName = "挑战完成"; break;
+                    case TASK:
+                        points = 5;
+                        headerKey = "notification.ascension.header.advancement.task";
+                        break;
+                    case GOAL:
+                        points = 15;
+                        headerKey = "notification.ascension.header.advancement.goal";
+                        break;
+                    case CHALLENGE:
+                        points = 45;
+                        headerKey = "notification.ascension.header.advancement.challenge";
+                        break;
                 }
 
-                int currentPoints = nbt.getInt("my_global_skills");
-                nbt.putInt("my_global_skills", currentPoints + points);
+                int currentPoints = nbt.getInt("skill_points");
+                nbt.putInt("skill_points", currentPoints + points);
                 PacketUtils.syncSkillData(owner);
 
-                Text msg = Text.literal("§e[" + typeName + "] §f")
+                // [修改] 发送通知
+                // 此时 headerKey 已经是类似 "notification.ascension.header.advancement.challenge" 的键了
+                // advancement.getDisplay().getTitle() 本身就是 Text 组件，直接 append 即可，不需要 translatable 包装
+                Text msg = Text.translatable(headerKey).formatted(Formatting.YELLOW)
+                        .append(" ")
                         .append(advancement.getDisplay().getTitle().copy().formatted(Formatting.YELLOW))
-                        .append(Text.literal(" §a+" + points + " 技能点").formatted(Formatting.BOLD));
+                        .append(" ")
+                        .append(Text.translatable("notification.ascension.suffix.points", points).formatted(Formatting.BOLD, Formatting.GREEN));
+
                 PacketUtils.sendNotification(owner, msg);
             }
         }

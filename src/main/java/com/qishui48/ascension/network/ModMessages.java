@@ -54,7 +54,7 @@ public class ModMessages {
                 int actualCost = skill.getCost(currentLevel + 1);
 
                 IEntityDataSaver dataSaver = (IEntityDataSaver) player;
-                int currentPoints = dataSaver.getPersistentData().getInt("my_global_skills");
+                int currentPoints = dataSaver.getPersistentData().getInt("skill_points");
 
                 if (currentPoints < actualCost) {
                     player.sendMessage(Text.of("§c技能点不足！需要: " + actualCost + " 点"), true);
@@ -62,7 +62,7 @@ public class ModMessages {
                 }
 
                 // 执行交易
-                dataSaver.getPersistentData().putInt("my_global_skills", currentPoints - actualCost);
+                dataSaver.getPersistentData().putInt("skill_points", currentPoints - actualCost);
                 PacketUtils.unlockSkill(player, skillId);
                 SkillEffectHandler.refreshAttributes(player);
                 SkillEffectHandler.onSkillUnlocked(player, skillId);

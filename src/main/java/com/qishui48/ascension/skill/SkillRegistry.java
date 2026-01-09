@@ -47,13 +47,9 @@ public class SkillRegistry {
         register(new Skill("hunger_tolerance", Items.COOKED_BEEF, 3, "survival", 1, 4));
 
         // Tier 4
-        register(new Skill("life_steal",  Items.DIAMOND_SWORD, 4, "combat", 1, 2));
         register(new Skill("hunger_constitution", Items.ROTTEN_FLESH, 4, "hunger_tolerance", 2, 3));
-
-        // === 新增：隐藏技能 - 饥饿爆发 (Hunger Burst) ===
-        // 父节点: hunger_constitution, MaxLevel: 1, IsHidden: true
         // 解锁条件由 PlayerEntityMixin 中的逻辑触发 (Reveal)，这里主要配置元数据
-        register(new Skill("hunger_burst", Items.RABBIT_FOOT, 5, "hunger_constitution", 1, true, 1));
+        register(new Skill("hunger_burst", Items.RABBIT_FOOT, 5, "hunger_constitution", 1, true, 1));// === 隐藏技能 - 饥饿爆发 (Hunger Burst) ===
 
         calculateLayout();
     }
@@ -62,7 +58,7 @@ public class SkillRegistry {
         SKILLS.put(skill.id, skill);
     }
 
-    private static final int NODE_WIDTH = 40;
+    private static final int NODE_WIDTH = 60;
     private static final int NODE_SPACING_Y = 50;
 
     private static void calculateLayout() {
