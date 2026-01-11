@@ -76,8 +76,8 @@ public class SkillRegistry {
         // 主父节点设为 "fire_infection" (用于确定它画在左边分支的下方)
         // 额外父节点设为 "fire_res" (右边也会画一条线连过来)
         register(new Skill("thermal_dynamo", Items.CAMPFIRE, 4, "fire_infection", 1, 5)
-                .addParent("fire_res")
-                .addCriterion(new UnlockCriterion(Stats.CUSTOM, Ascension.SWIM_IN_LAVA, 5000, "criterion.ascension.swim_lava").setDisplayDivisor(100.0)));
+                .withVisualParent("fire_res")
+                .addCriterion(new UnlockCriterion(Stats.CUSTOM, Ascension.SWIM_IN_LAVA, 20000, "criterion.ascension.swim_lava").setDisplayDivisor(100.0)));
 
 
         // --- 机动系分支 ---
@@ -128,6 +128,9 @@ public class SkillRegistry {
             assignPosition(root, currentX + (root.subTreeWidth / 2), 0);
             currentX += root.subTreeWidth + 10;
         }
+
+        // 后处理 (Post-processing)，修正那些需要“居中”的节点
+        adjustVisualPositions();
     }
 
     private static void calculateWidth(Skill node) {
@@ -163,5 +166,50 @@ public class SkillRegistry {
         return SKILLS.values().stream()
                 .filter(s -> Objects.equals(s.parentId, parent.id))
                 .collect(Collectors.toList());
+    }
+
+    private static void adjustVisualPositions() {
+        // 遍历所有技能，寻找有 visualParents 的技能
+        for (Skill skill : SKILLS.values()) {
+            if (!skill.visualParents.isEmpty()) {
+                List<Skill> allParents = new ArrayList<>();
+
+                // 加入原本的逻辑父节点
+                if (skill.parentId != null) {
+                    Skill logicalParent = get(skill.parentId);
+                    if (logicalParent != null) allParents.add(logicalParent);
+                }
+
+                // 加入额外的视觉父节点
+                for (String pid : skill.visualParents) {
+                    Skill vp = get(pid);
+                    if (vp != null) allParents.add(vp);
+                }
+
+                if (!allParents.isEmpty()) {
+                    // 计算所有父节点的 X 坐标平均值
+                    int totalX = 0;
+                    for (Skill p : allParents) {
+                        totalX += p.x;
+                    }
+                    int averageX = totalX / allParents.size();
+
+                    // 强行修正当前技能的 X 坐标
+                    // 注意：这里可能需要递归调整它的子节点，但为了简单，
+                    // 我们假设汇聚节点通常是叶子节点或独立分支的开始。
+                    // 如果需要连带移动子树，需要计算 deltaX 并应用到所有 children。
+                    int deltaX = averageX - skill.x;
+                    shiftSubTree(skill, deltaX);
+                }
+            }
+        }
+    }
+
+    // 辅助方法：平移整个子树
+    private static void shiftSubTree(Skill root, int deltaX) {
+        root.x += deltaX;
+        for (Skill child : getChildren(root)) {
+            shiftSubTree(child, deltaX);
+        }
     }
 }

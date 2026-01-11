@@ -49,32 +49,36 @@ public class ModMessages {
                     }
                 }
 
-                // 检查父节点 (逻辑改为：满足任意一个父节点即可)
+                // 多父节点检查逻辑 (OR 关系)
+                // 原有的逻辑只检查 parentId，现在我们允许 visualParents 中的任意一个解锁也算满足条件
                 if (currentLevel == 0) {
-                    boolean hasParent = (skill.parentId != null);
-                    boolean parentUnlocked = false;
+                    boolean hasParent = (skill.parentId != null) || !skill.visualParents.isEmpty();
 
-                    // 收集所有父节点 (主父节点 + 额外父节点)
-                    List<String> allParents = new ArrayList<>();
-                    if (skill.parentId != null) allParents.add(skill.parentId);
-                    allParents.addAll(skill.extraParents);
+                    if (hasParent) {
+                        boolean anyParentUnlocked = false;
 
-                    if (allParents.isEmpty()) {
-                        parentUnlocked = true; // 根节点
-                    } else {
-                        // 只要有一个父节点解锁了，就算通过
-                        for (String pid : allParents) {
-                            if (PacketUtils.isSkillUnlocked(player, pid)) {
-                                parentUnlocked = true;
-                                break;
+                        // 1. 检查主逻辑父节点
+                        if (skill.parentId != null && PacketUtils.isSkillUnlocked(player, skill.parentId)) {
+                            anyParentUnlocked = true;
+                        }
+
+                        // 2. 检查所有视觉父节点
+                        if (!anyParentUnlocked) {
+                            for (String vParentId : skill.visualParents) {
+                                if (PacketUtils.isSkillUnlocked(player, vParentId)) {
+                                    anyParentUnlocked = true;
+                                    break;
+                                }
                             }
                         }
-                    }
 
-                    if (!parentUnlocked) {
-                        // 提示可以做得更智能，告诉玩家缺哪些
-                        player.sendMessage(Text.translatable("message.ascension.parent_locked_any").formatted(Formatting.RED), true);
-                        return;
+                        // 3. 如果没有任何一个父节点解锁，则禁止解锁该技能
+                        if (!anyParentUnlocked) {
+                            // 这里为了简单，我们还是显示主父节点的名字，或者你可以改为通用提示
+                            String parentName = skill.parentId != null ? SkillRegistry.get(skill.parentId).getName().getString() : "???";
+                            player.sendMessage(Text.translatable("message.ascension.parent_locked", parentName).formatted(Formatting.RED), true);
+                            return;
+                        }
                     }
                 }
 

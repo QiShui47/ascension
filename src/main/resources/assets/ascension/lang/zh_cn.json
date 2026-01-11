@@ -53,6 +53,7 @@
   "gui.ascension.points_remaining": "剩余技能点: %s",
   "gui.ascension.controls_hint": "左键拖动，滚轮缩放，中键切换技能",
   "gui.ascension.help_tip": "技能点获取指南",
+  "gui.ascension.tooltip.criterion_progress": "%s- %s (%s/%s)",
   "tooltip.ascension.help.collect": "收集新物品 (+1~4)",
   "tooltip.ascension.help.food": "品尝新食物 (+2)",
   "tooltip.ascension.help.explore": "发现新群系 (+2) / 新维度 (+20)",

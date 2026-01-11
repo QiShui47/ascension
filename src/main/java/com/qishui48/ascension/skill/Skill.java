@@ -15,12 +15,14 @@ public class Skill {
     public final int maxLevel;
     public final boolean isHidden; // 新增：是否是隐藏技能
 
-    public final List<String> extraParents = new ArrayList<>(); // 额外父节点 (用于逻辑判定和画线)
     public final List<String> mutexSkills = new ArrayList<>();  // 互斥技能 ID 列表
 
     private final int[] costs;
     // key = 目标等级 (例如 1 代表解锁条件, 2 代表升到 2 级的条件)
     private final Map<Integer, List<UnlockCriterion>> criteriaMap = new HashMap<>();
+
+    // 额外父节点 ID
+    public List<String> visualParents = new ArrayList<>();
 
     public int subTreeWidth = 0;
     public int x;
@@ -55,9 +57,11 @@ public class Skill {
         this.mutexSkills.addAll(Arrays.asList(skillIds));
         return this;
     }
-    // 添加额外父节点 (实现多父节点汇聚)
-    public Skill addParent(String parentId) {
-        this.extraParents.add(parentId);
+    // [新增] 链式调用添加视觉父节点
+    public Skill withVisualParent(String parentId) {
+        if (parentId != null && !parentId.isEmpty()) {
+            this.visualParents.add(parentId);
+        }
         return this;
     }
 

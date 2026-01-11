@@ -250,8 +250,8 @@ public abstract class PlayerEntityMixin {
             exploredBiomes.add(NbtString.of(biomeId));
             nbt.put("explored_biomes", exploredBiomes);
 
-            // 奖励 2 点
-            int points = 2;
+            // 奖励 10 点
+            int points = 10;
             int currentPoints = nbt.getInt("skill_points");
             nbt.putInt("skill_points", currentPoints + points);
 

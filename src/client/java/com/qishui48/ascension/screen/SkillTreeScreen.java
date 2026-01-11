@@ -97,39 +97,10 @@ public class SkillTreeScreen extends Screen {
         context.getMatrices().translate(-centerX, -centerY, 0);
 
         // 1. 渲染连线
-        for (Skill skill : SkillRegistry.getAll()) {
-            int currentLevel = getLevel(skill.id);
-            boolean isRevealed = isRevealed(skill.id);
-            if (skill.isHidden && !isRevealed && currentLevel == 0) continue;
-
-            // === [新增] 多父节点连线支持 ===
-            // 收集所有父节点 ID (主 + 额外)
-            List<String> drawLineTo = new ArrayList<>();
-            if (skill.parentId != null) drawLineTo.add(skill.parentId);
-            drawLineTo.addAll(skill.extraParents);
-
-            for (String pid : drawLineTo) {
-                Skill parent = SkillRegistry.get(pid);
-                if (parent == null) continue;
-
-                // 父节点隐藏检查
-                boolean parentRevealed = isRevealed(parent.id);
-                int parentLevel = getLevel(parent.id);
-                if (parent.isHidden && !parentRevealed && parentLevel == 0) continue; // 跳过
-
-                int x1 = (int)(centerX + parent.x + scrollX) + 8;
-                int y1 = (int)(centerY + parent.y + scrollY) + 8;
-                int x2 = (int)(centerX + skill.x + scrollX) + 8;
-                int y2 = (int)(centerY + skill.y + scrollY) + 8;
-
-                // 连线颜色逻辑：如果 [自己解锁] 且 [该父节点也解锁]，则为金色；否则白色
-                boolean isLinked = currentLevel > 0 && parentLevel > 0;
-                int color = isLinked ? 0xFFFFD700 : 0xFFFFFFFF;
-
-                if (x1 != x2) context.fill(Math.min(x1, x2), y1 - 1, Math.max(x1, x2), y1 + 1, color);
-                if (y1 != y2) context.fill(x2 - 1, Math.min(y1, y2), x2 + 1, Math.max(y1, y2), color);
-            }
-        }
+        // 第一遍：绘制所有连线（白色/背景色）
+        renderLinks(context, centerX, centerY, false);
+        // 第二遍：只绘制已激活的连线（金色），覆盖在上面
+        renderLinks(context, centerX, centerY, true);
 
         // 2. 渲染图标、悬浮框、文字
         Skill hoveredSkill = null;
@@ -199,7 +170,7 @@ public class SkillTreeScreen extends Screen {
                         0xFFFFFF, true);
             }
 
-            // === [修改] 渲染技能名 (智能居中 + 背景条) ===
+            // === 渲染技能名 (居中 + 背景条) ===
             Text name = skill.getName();
             float textScale = 0.7f;
             int textWidth = this.textRenderer.getWidth(name);
@@ -239,6 +210,62 @@ public class SkillTreeScreen extends Screen {
         }
 
         // HUD
+        renderHud(context,mouseX,mouseY);
+    }
+
+    // 辅助方法：绘制连线
+    private void renderLinks(DrawContext context, int centerX, int centerY, boolean renderActiveOnly) {
+        for (Skill skill : SkillRegistry.getAll()) {
+            int currentLevel = getLevel(skill.id);
+            boolean isRevealed = isRevealed(skill.id);
+            if (skill.isHidden && !isRevealed && currentLevel == 0) continue;
+
+            // 收集所有父节点 (visualParents 已经包含了 addParent 的内容)
+            List<String> drawLineTo = new ArrayList<>();
+            if (skill.parentId != null) drawLineTo.add(skill.parentId);
+            drawLineTo.addAll(skill.visualParents);
+
+            for (String pid : drawLineTo) {
+                Skill parent = SkillRegistry.get(pid);
+                if (parent == null) continue;
+
+                boolean parentRevealed = isRevealed(parent.id);
+                int parentLevel = getLevel(parent.id);
+                if (parent.isHidden && !parentRevealed && parentLevel == 0) continue;
+
+                int x1 = (int)(centerX + parent.x + scrollX) + 8;
+                int y1 = (int)(centerY + parent.y + scrollY) + 8;
+                int x2 = (int)(centerX + skill.x + scrollX) + 8;
+                int y2 = (int)(centerY + skill.y + scrollY) + 8;
+
+                boolean isLinked = currentLevel > 0 && parentLevel > 0;
+
+                // 如果是“只画激活线”模式，但这条线未激活，则跳过
+                if (renderActiveOnly && !isLinked) continue;
+
+                // 如果是“画所有线”模式，且这条线是激活的，也跳过（留给第二遍画，或者画到底层也没关系，反正会被覆盖）
+                // 为了性能和避免锯齿混合，我们通常第一遍画所有线(白色)，第二遍画金线覆盖
+
+                int color = isLinked ? 0xFFFFD700 : 0xFFFFFFFF;
+
+                // 只有当我们在第二遍循环(renderActiveOnly=true) 且 线是激活的，才画金色
+                // 或者我们在第一遍循环(renderActiveOnly=false) 且 线是不激活的，才画白色
+                // 这里采用简单策略：第一遍全画(白色)，第二遍只画金。
+                if (!renderActiveOnly) {
+                    // 第一遍：只画白色，忽略已经是金色的（避免重复绘制导致边缘锯齿，或者干脆全画白色打底）
+                    color = 0xFFFFFFFF;
+                } else {
+                    // 第二遍：只画金色
+                    if (!isLinked) continue;
+                }
+
+                if (x1 != x2) context.fill(Math.min(x1, x2), y1 - 1, Math.max(x1, x2), y1 + 1, color);
+                if (y1 != y2) context.fill(x2 - 1, Math.min(y1, y2), x2 + 1, Math.max(y1, y2), color);
+            }
+        }
+    }
+
+    private void renderHud(DrawContext context,int mouseX,int mouseY){
         if (this.client != null && this.client.player != null) {
             int points = ((IEntityDataSaver) this.client.player).getPersistentData().getInt("skill_points");
 
@@ -371,9 +398,11 @@ public class SkillTreeScreen extends Screen {
                         String color = (currentVal >= c.getThreshold()) ? "§a" : "§7";
 
                         // [修改] 拼接条件详情：颜色 + " - " + 描述 + " (当前/目标)"
-                        tooltip.add(Text.literal(color + " - ")
-                                .append(c.getDescription())
-                                .append(Text.literal(" (" + currentVal + "/" + c.getThreshold() + ")")));
+                        tooltip.add(Text.translatable("gui.ascension.tooltip.criterion_progress",
+                                color,
+                                c.getDescription(),
+                                currentVal,
+                                c.getThreshold()));
                     }
                 }
             }
@@ -384,7 +413,7 @@ public class SkillTreeScreen extends Screen {
             // === [新增] 多父节点解锁检查 ===
             List<String> allParents = new ArrayList<>();
             if (skill.parentId != null) allParents.add(skill.parentId);
-            allParents.addAll(skill.extraParents);
+            allParents.addAll(skill.visualParents);
 
             if (allParents.isEmpty()) {
                 parentUnlocked = true; // 根节点
